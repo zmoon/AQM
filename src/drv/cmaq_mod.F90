@@ -157,6 +157,83 @@ contains
 
   end subroutine cmaq_advance
 
+  subroutine cmaq_advance_vdiff(jdate, jtime, tstep, run_aero, rc)
+
+    integer,           intent(in)    :: jdate, jtime, tstep(3)
+    logical,           intent(in)    :: run_aero
+    integer, optional, intent(out)   :: rc
+
+    ! -- local variables
+
+    ! -- external methods
+    INTERFACE
+      SUBROUTINE VDIFF ( CGRID, JDATE, JTIME, TSTEP )
+        REAL, POINTER             :: CGRID( :,:,:,: )
+        INTEGER                   :: JDATE, JTIME
+        INTEGER                   :: TSTEP( 3 )
+      END SUBROUTINE VDIFF
+    END INTERFACE
+
+    ! -- begin
+    if (present(rc)) rc = AQM_RC_SUCCESS
+
+    ! -- advance dry deposition and vertical diffusion on a grid
+    CALL VDIFF ( CGRID, JDATE, JTIME, TSTEP )
+
+  end subroutine cmaq_advance_vdiff
+
+  subroutine cmaq_advance_chem(jdate, jtime, tstep, run_aero, rc)
+
+    integer,           intent(in)    :: jdate, jtime, tstep(3)
+    logical,           intent(in)    :: run_aero
+    integer, optional, intent(out)   :: rc
+
+    ! -- local variables
+
+    ! -- external methods
+    INTERFACE
+      SUBROUTINE CHEM ( CGRID, JDATE, JTIME, TSTEP )
+        REAL, POINTER             :: CGRID( :,:,:,: )
+        INTEGER                   :: JDATE, JTIME
+        INTEGER                   :: TSTEP( 3 )
+      END SUBROUTINE CHEM
+    END INTERFACE
+
+    ! -- begin
+    if (present(rc)) rc = AQM_RC_SUCCESS
+
+    ! -- advance chemical processes on a grid
+    CALL CHEM ( CGRID, JDATE, JTIME, TSTEP )
+
+  end subroutine cmaq_advance_chem
+
+  subroutine cmaq_advance_aero(jdate, jtime, tstep, run_aero, rc)
+
+    integer,           intent(in)    :: jdate, jtime, tstep(3)
+    logical,           intent(in)    :: run_aero
+    integer, optional, intent(out)   :: rc
+
+    ! -- local variables
+
+    ! -- external methods
+    INTERFACE
+      SUBROUTINE AERO ( CGRID, JDATE, JTIME, TSTEP )
+        REAL, POINTER             :: CGRID( :,:,:,: )
+        INTEGER                   :: JDATE, JTIME
+        INTEGER                   :: TSTEP( 3 )
+      END SUBROUTINE AERO
+    END INTERFACE
+
+    ! -- begin
+    if (present(rc)) rc = AQM_RC_SUCCESS
+
+    ! -- advance aerosol processes on a grid
+    if (run_aero) then
+      CALL AERO ( CGRID, JDATE, JTIME, TSTEP )
+    end if
+
+  end subroutine cmaq_advance_aero
+
   subroutine cmaq_import(tracers, prl, phii, temp, start_index, rc)
 
     real(AQM_KIND_R8), intent(in)  :: tracers(:,:,:,:)
