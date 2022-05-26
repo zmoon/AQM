@@ -332,6 +332,7 @@ contains
     if (present(rc)) rc = AQM_RC_SUCCESS
 
     n = max(0, start_index - 1)
+    print *, '>>>>>>>>>>>>>>>> first index n:', n + 1
 
     ! -- gas chemistry
     if ( n_gc_spc > 0 ) then
