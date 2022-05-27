@@ -121,8 +121,25 @@ contains
       if (config % verbose) call cmaq_conc_log(trim(config % name) // ": import")
     end if
 
-    ! -- advance model
-    call cmaq_advance(jdate, jtime, tstep, config % run_aero, rc=localrc)
+    ! ! -- advance model
+    ! call cmaq_advance(jdate, jtime, tstep, config % run_aero, rc=localrc)
+    ! if (aqm_rc_check(localrc, msg="Failed to advance CMAQ on local DE", &
+    !   file=__FILE__, line=__LINE__, rc=rc)) return
+
+    ! -- advance model in three sub-steps, so that we can capture species pre chem
+
+    call cmaq_advance_vdiff(jdate, jtime, tstep, config % run_aero, rc=localrc)
+    if (aqm_rc_check(localrc, msg="Failed to advance CMAQ on local DE", &
+      file=__FILE__, line=__LINE__, rc=rc)) return
+
+    ! -- export selected chemical species pre chem
+    call cmaq_export(stateOut % tr, stateIn % prl, stateIn % temp, 194)
+
+    call cmaq_advance_chem(jdate, jtime, tstep, config % run_aero, rc=localrc)
+    if (aqm_rc_check(localrc, msg="Failed to advance CMAQ on local DE", &
+      file=__FILE__, line=__LINE__, rc=rc)) return
+
+    call cmaq_advance_aero(jdate, jtime, tstep, config % run_aero, rc=localrc)
     if (aqm_rc_check(localrc, msg="Failed to advance CMAQ on local DE", &
       file=__FILE__, line=__LINE__, rc=rc)) return
 
