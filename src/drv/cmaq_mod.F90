@@ -36,6 +36,7 @@ module cmaq_mod
   public :: cmaq_logdev
 
   public :: cmaq_advance
+  public :: cmaq_advance_aero, cmaq_advance_chem, cmaq_advance_vdiff
   public :: cmaq_init
   public :: cmaq_conc_init
   public :: cmaq_conc_log
